@@ -1,0 +1,6 @@
+[install.filesystem.root]
+type = "xfs"
+
+# Uncomment once the bootc binary including the new ostree option landed in FCOS
+#[install.ostree]
+#bls-append-except-default = 'grub_users=""'
