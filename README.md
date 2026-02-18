@@ -1,5 +1,19 @@
 # Generate FCOS disk image with BIB - experimentation
 
+## Overview
+
+This work aims to **identify the missing pieces** required to FCOS disk images using `bootc-image-builder` (BIB).
+
+This is a **logical continuation** of the work done in [coreos-assembler PR #4224](https://github.com/coreos/coreos-assembler/pull/4224/), which introduced the ability to use `bootc install to-filesystem` for FCOS image generation.
+
+## Goals
+
+1. Identify gaps between current `bootc-image-builder` capabilities and FCOS requirements
+2. Document the missing features/stages needed for full FCOS support
+3. Propose solutions that can be contributed upstream to `osbuild/images` and BIB.
+
+## Usage
+
 ```bash
 # Add our configuration to base image
 sudo podman build -f Containerfile -t fcos-bib
@@ -25,3 +39,4 @@ cosa run -c -B butane.bu --qemu-image disk.qcow2
 I'm using the issues section to report all the issues as it's more appropriate to discuss.
 
 * [bootc-image-builder is missing ignition support](https://github.com/joelcapitao/bib-fcos-experimentation/issues/1)
+* [coreos-gpt-setup fails to resize rootfs partition](https://github.com/joelcapitao/bib-fcos-experimentation/issues/2)
