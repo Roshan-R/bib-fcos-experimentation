@@ -12,8 +12,8 @@ alias bib='sudo podman run --rm -it --privileged --security-opt label=type:uncon
 # this image was generated from https://github.com/coreos/coreos-assembler/pull/4224/
 BUILD_IMAGE=quay.io/jbtrystramtestimages/cosa:latest
 
-# Output the manifest, the current CLI breaks the console, so jq'ing is tedious
-bib manifest localhost/fcos-bib 
+# Output the manifest
+bib manifest localhost/fcos-bib | grep -o '{"version".*' | jq .
 
 # Generate the disk image and boot it with cosa
 bib localhost/fcos-bib --type qcow2 --build-container $BUILD_IMAGE 
