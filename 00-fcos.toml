@@ -6,7 +6,11 @@ type = "xfs"
 # remove those kargs once supported.
 [install]
 kargs = ["rw", "console=tty0", "console=ttyS0", "ignition.firstboot", "ignition.platform.id=qemu"]
-#root-mount-spec = "LABEL=root"
+# We dont't want bootc to append the kargs list with boot=UUID= and root=UUID= info
+# as CoreOS already handles this.
+root-mount-spec = ""
+boot-mount-spec = ""
+stateroot = "fedora-coreos"
 
 # Uncomment once the bootc binary including the new ostree option landed in FCOS
 #[install.ostree]

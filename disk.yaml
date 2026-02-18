@@ -1,6 +1,11 @@
 partition_table:
   type: "gpt"
   uuid: "00000000-0000-4000-a000-000000000001"
+  # Below we tell osbuild to reserve the last 2048 blocks which
+  # are needed for CoreOS that move the second header at the end
+  # of the disk.
+  # See https://github.com/coreos/fedora-coreos-config/blob/7fbf510367d495529d2a915707b547d4c663f609/overlay.d/05core/usr/lib/dracut/modules.d/35coreos-ignition/coreos-gpt-setup.sh#L4
+  extra_padding: 1031168
   partitions:
     # BIOS Boot partition (pour boot legacy)
     - size: "1 MiB"
