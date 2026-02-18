@@ -22,14 +22,6 @@ cosa run -c -B butane.bu --qemu-image disk.qcow2
 
 ## Issues
 
-### 1. Missing ignition support in b-i-b
+I'm using the issues section to report all the issues as it's more appropriate to discuss.
 
-We should be able to specify something like:
-
-```
-image_types:
-  "raw":
-    ignition: true
-```
-
-in the `imagetypes.yaml` file and b-i-b would add the osbuild stage creating the file `ignition.firstboot` in `/boot`.
+* [bootc-image-builder is missing ignition support](https://github.com/joelcapitao/bib-fcos-experimentation/issues/1)
