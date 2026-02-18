@@ -19,3 +19,17 @@ bib manifest localhost/fcos-bib
 bib localhost/fcos-bib --type qcow2 --build-container $BUILD_IMAGE 
 cosa run -c -B butane.bu --qemu-image disk.qcow2
 ```
+
+## Issues
+
+### 1. Missing ignition support in b-i-b
+
+We should be able to specify something like:
+
+```
+image_types:
+  "raw":
+    ignition: true
+```
+
+in the `imagetypes.yaml` file and b-i-b would add the osbuild stage creating the file `ignition.firstboot` in `/boot`.
