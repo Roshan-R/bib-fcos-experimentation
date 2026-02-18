@@ -23,6 +23,7 @@ partition_table:
     - size: "384 MiB"
       type: BC13C2FF-59E6-4262-A352-B275FD6F7172
       payload_type: "filesystem"
+      label: "boot"
       payload:
         type: "ext4"
         uuid: "96d15588-3596-4b3c-adca-a2ff7279ea63"
@@ -34,6 +35,7 @@ partition_table:
 
     # Root partition (type root-x86_64)
     - type: 4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709
+      label: "root"
       payload_type: "filesystem"
       payload:
         type: "xfs"
