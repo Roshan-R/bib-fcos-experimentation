@@ -30,8 +30,17 @@ BUILD_IMAGE=quay.io/jbtrystramtestimages/cosa:latest
 bib manifest localhost/fcos-bib | grep -o '{"version".*' | jq .
 
 # Generate the disk image and boot it with cosa
+cat > config.bu <<EOF
+variant: fcos
+version: 1.5.0
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE5h253p77Ez3dboIen2BBM2r5z4QN3/bLUVRySWiJn0 jcapitao@redhat.com
+EOF
 bib localhost/fcos-bib --type qcow2 --build-container $BUILD_IMAGE 
-cosa run -c -B butane.bu --qemu-image disk.qcow2
+cosa run -c -B config.bu --qemu-image disk.qcow2
 ```
 
 ## Issues
