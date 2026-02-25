@@ -1,14 +1,16 @@
-# Generate FCOS disk image with BIB - experimentation
+# Generate FCOS disk image with image-builder - experimentation
 
 ## Overview
 
-This work aims to **identify the missing pieces** required to FCOS disk images using `bootc-image-builder` (BIB).
+This work aims to **identify the missing pieces** required to FCOS disk images using `image-builder-cli`.
+We use `image-builder-cli` instead of `bootc-image-builder` because it is the designated successor in the near future.
+Adopting the target binary now helps catch issues early and ensures we receive updates first, as `bootc-image-builder` inherits its changes from i-b-c.
 
 This is a **logical continuation** of the work done in [coreos-assembler PR #4224](https://github.com/coreos/coreos-assembler/pull/4224/), which introduced the ability to use `bootc install to-filesystem` for FCOS image generation.
 
 ## Goals
 
-1. Identify gaps between current `bootc-image-builder` capabilities and FCOS requirements
+1. Identify gaps between current `image-builder-cli` capabilities and FCOS requirements
 2. Document the missing features/stages needed for full FCOS support
 3. Propose solutions that can be contributed upstream to `osbuild/images` and BIB.
 
@@ -16,31 +18,32 @@ This is a **logical continuation** of the work done in [coreos-assembler PR #422
 
 ```bash
 # Add our configuration to base image
-sudo podman build -f Containerfile -t fcos-bib
+TARGET_FCOS_IMAGE=localhost/fcos-with-image-builder
+sudo podman build -f Containerfile -t $TARGET_FCOS_IMAGE
 
 # verify the configuration
-sudo podman run --rm localhost/fcos-bib bootc install print-configuration | jq
+sudo podman run --rm $TARGET_FCOS_IMAGE bootc install print-configuration | jq
 
 mkdir -p output
-alias bib='sudo podman run --rm -it --privileged --security-opt label=type:unconfined_t -v ./output:/output -v /var/lib/containers/storage:/var/lib/containers/storage quay.io/centos-bootc/bootc-image-builder:latest'
-# this image was generated from https://github.com/coreos/coreos-assembler/pull/4224/
-BUILD_IMAGE=quay.io/jbtrystramtestimages/cosa:latest
 
-# Output the manifest
-bib manifest localhost/fcos-bib | grep -o '{"version".*' | jq .
+alias ibc='sudo podman run --rm --privileged --network=none -v /var/lib/containers/storage:/var/lib/containers/storage -v ./output:/output ghcr.io/osbuild/image-builder-cli:latest'
+# this image was generated from https://github.com/coreos/coreos-assembler/pull/4224/
+BUILDER_IMAGE=quay.io/jbtrystramtestimages/cosa:latest
 
 # Generate the disk image and boot it with cosa
-cat > config.bu <<EOF
-variant: fcos
-version: 1.5.0
-passwd:
-  users:
-    - name: core
-      ssh_authorized_keys:
-        - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE5h253p77Ez3dboIen2BBM2r5z4QN3/bLUVRySWiJn0 jcapitao@redhat.com
-EOF
-bib localhost/fcos-bib --type qcow2 --build-container $BUILD_IMAGE 
-cosa run -c -B config.bu --qemu-image disk.qcow2
+ibc build qcow2 \
+          --bootc-build-ref $BUILDER_IMAGE \
+          --bootc-ref $TARGET_FCOS_IMAGE \
+          --output-dir fedora-coreos \
+          --output-name fedora-coreos-rawhide \
+          --with-buildlog \
+          --with-manifest \
+          --with-metrics
+
+# Check the osbuild manifest that was generated and used
+jq . output/fedora-coreos/fedora-coreos-rawhide.osbuild-manifest.json
+
+cosa run -c --qemu-image output/fedora-coreos/fedora-coreos-rawhide.qcow2
 ```
 
 ## Issues
