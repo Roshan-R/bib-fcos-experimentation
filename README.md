@@ -28,7 +28,11 @@ mkdir -p output
 
 alias ibc='sudo podman run --rm --privileged --network=none -v /var/lib/containers/storage:/var/lib/containers/storage -v ./output:/output ghcr.io/osbuild/image-builder-cli:latest'
 # this image was generated from https://github.com/coreos/coreos-assembler/pull/4224/
-BUILDER_IMAGE=quay.io/jbtrystramtestimages/cosa:latest
+#BUILDER_IMAGE=quay.io/jbtrystramtestimages/cosa:latest
+# Get rid of this line below once https://github.com/osbuild/images/pull/2231 is merged
+# and uncomment the line below
+BUILDER_IMAGE=localhost/cosa-of-ib
+sudo podman build -f Containerfile-cosa -t $BUILDER_IMAGE
 
 # Generate the disk image and boot it with cosa
 ibc build qcow2 \
