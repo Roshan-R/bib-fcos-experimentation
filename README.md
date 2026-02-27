@@ -30,19 +30,21 @@ alias ibc='sudo podman run --rm --privileged \
            --network=none \
            -v /var/lib/containers/storage:/var/lib/containers/storage \
            -v ./output:/output \
+           -v ./fcos-bp.toml:/fcos-bp.toml \
            ghcr.io/osbuild/image-builder-cli:latest'
 
 # this image was generated from https://github.com/coreos/coreos-assembler/pull/4224/
+# Use the base cosa image once the PR is merged
 #BUILDER_IMAGE=quay.io/jbtrystramtestimages/cosa:latest
-# Get rid of this line below once https://github.com/osbuild/images/pull/2231 is merged, and 
-# contained in a new osbuild/images release which is included in i-b-c
+# Get rid of those lines below once 
+#  1. https://github.com/osbuild/images/pull/2231 is merged, and
+#     contained in a new osbuild/images release which is included in i-b-c
+#  2. https://github.com/osbuild/images/pull/2222 is merged and included as well
 # Then uncomment the line above
-# Also integrate a build of 
-# https://github.com/osbuild/images/pull/2222
-BUILDER_IMAGE=quay.io/jbtrystramtestimages/cosa-ib
-#sudo podman build -f Containerfile-cosa -t $BUILDER_IMAGE
-
-alias ibc='sudo podman run --rm --privileged --network=none -v /var/lib/containers/storage:/var/lib/containers/storage -v ./output:/output -v ./fcos-bp.toml:/fcos-bp.toml $BUILDER_IMAGE'
+sudo podman build -f Containerfile-cosa -t $BUILDER_IMAGE
+IBC_IMAGE=localhost/custom-image-builder
+sudo podman build -f Containerfile-image-builder -t $IBC_IMAGE
+alias ibc='sudo podman run --rm --privileged --network=none -v /var/lib/containers/storage:/var/lib/containers/storage -v ./output:/output -v ./fcos-bp.toml:/fcos-bp.toml $IBC_IMAGE'
 
 # Generate the disk image
 ibc build qcow2 \
