@@ -65,6 +65,19 @@ cosa run -c --qemu-image output/fedora-coreos/fedora-coreos-rawhide.qcow2
 
 # run the tests
 kola run --qemu-image output/fedora-coreos/fedora-coreos-rawhide.qcow2
+
+ISO_BASE_IMAGE=localhost/fcos-iso
+
+# Build iso base image
+sudo podman build \
+  --cap-add sys_admin \
+  --security-opt label=disable \
+  -f Containerfile-iso \
+  -t $ISO_BASE_IMAGE
+
+ibc build bootc-generic-iso \
+  --bootc-ref localhost/fcos-iso \
+  --output-dir /output
 ```
 
 ## Issues
