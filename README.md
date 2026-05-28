@@ -6,7 +6,8 @@ This work aims to identify the missing pieces required to FCOS disk images using
 We use `image-builder-cli` instead of `bootc-image-builder` because it is the designated successor in the near future.
 Adopting the target binary now helps catch issues early and ensures we receive updates first, as `bootc-image-builder` inherits its changes from i-b-c.
 
-This is a logical continuation of the work done in [coreos-assembler PR #4224](https://github.com/coreos/coreos-assembler/pull/4224/), which introduced the ability to use `bootc install to-filesystem` for FCOS image generation.
+This is a logical continuation of the work done in [coreos-assembler PR #4224](https://github.com/coreos/coreos-assembler/pull/4224/),
+which introduced the ability to use `bootc install to-filesystem` for FCOS image generation.
 
 ## Goals
 
@@ -67,10 +68,13 @@ This is a logical continuation of the work done in [coreos-assembler PR #4224](h
 
 ```bash
 TARGET_FCOS_IMAGE=localhost/fcos-with-image-builder
+BUILDER=quay.io/bootc-devel/fedora-bootc-rawhide-standard
+
+# Build the FCOS image
 sudo podman build -f Containerfile -t $TARGET_FCOS_IMAGE
-# verify the configuration
+
+# verify the bootc configuration
 sudo podman run --rm $TARGET_FCOS_IMAGE bootc install print-configuration | jq
-BUILDER_IMAGE=quay.io/bootc-devel/fedora-bootc-rawhide-standard
 
 mkdir -p output
 
@@ -86,7 +90,7 @@ alias ibc='sudo podman run --rm --privileged \
 #
 # Example: qemu image for x86_64, base variant
 ibc build qcow2 \
-          --bootc-build-ref $BUILDER_IMAGE \
+          --bootc-build-ref $BUILDER \
           --bootc-ref $TARGET_FCOS_IMAGE \
           --output-dir fedora-coreos \
           --output-name fedora-coreos-rawhide \
