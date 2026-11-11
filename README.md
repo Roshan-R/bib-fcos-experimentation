@@ -132,10 +132,41 @@ kola run --qemu-image output/fedora-coreos/fedora-coreos-rawhide.qcow2
 
 CI (`check-blueprints.yaml`) will fail if generated files are out of date.
 
+### OpenStack x86_64
+
+OpenStack uses the bootc `qcow2` image type with the generated OpenStack
+blueprint, not the RPM-based `openstack` image type. The local build below
+uses `--bootc-no-default-kernel-args` so default console
+arguments cannot override the blueprint's serial-then-graphical console order.
+The blueprint includes `rw` explicitly because this flag removes all defaults.
+
+For a local build, use the Usage example above with these replacements:
+
+```bash
+ibc build qcow2 \
+    --bootc-build-ref "$BUILDER" \
+    --bootc-ref "$TARGET_FCOS_IMAGE" \
+    --bootc-no-default-kernel-args \
+    --blueprint /srv/blueprints/generated/openstack-x86_64.toml \
+    --output-dir openstack \
+    --output-name fedora-coreos-rawhide-openstack \
+    --with-buildlog
+```
+
+The local alias uses `latest`; to reproduce CI, use the CLI and builder image
+digests in `image-builder-config.yaml` instead. Registry resolution of locally
+pulled multi-arch images may require the `localhost/` tags used by the Tekton task.
+
+**Known builder issue:** the pinned image-builder CLI writes the GRUB console
+drop-in to `tree:///boot/grub2/console.cfg`, outside the mounted disk. The fix
+uses `mount://boot/grub2/console.cfg` in `pkg/manifest/raw_bootc.go`.
+
+Upload the uncompressed QCOW2 to Glance with disk format `qcow2`, container
+format `bare`, and architecture `x86_64`. External xz compression is not required.
+
 ### Console karg reference
 
 Console kargs follow the canonical FCOS
 [platforms.yaml](https://github.com/coreos/fedora-coreos-config/blob/testing-devel/platforms.yaml).
 
 ## Current Issues
-
