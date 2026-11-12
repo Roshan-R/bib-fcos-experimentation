@@ -1,7 +1,8 @@
 # Platform: proxmoxve — x86_64
 # Canonical source: https://github.com/coreos/fedora-coreos-config/blob/testing-devel/platforms.yaml
 [customizations.kernel]
-append = "ignition.platform.id=proxmoxve console=tty0 console=ttyS0,115200n8"
+# Built with --bootc-no-default-kernel-args; preserve rw explicitly.
+append = "rw ignition.platform.id=proxmoxve console=tty0 console=ttyS0,115200n8"
 
 [customizations.bootloader.grub2]
 terminal_input = ["serial", "console"]

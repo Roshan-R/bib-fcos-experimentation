@@ -81,6 +81,14 @@ which introduced the ability to use `bootc install to-filesystem` for FCOS image
 
 ## Usage
 
+### Proxmox VE disk artifacts
+
+The local Proxmox VE x86_64 workflow builds a plain QCOW2 with Ignition
+platform settings. See [the Proxmox VE guide](docs/proxmoxve.md) for the
+build command and configuration-drive provisioning notes.
+
+### Generic disk images
+
 ```bash
 TARGET_FCOS_IMAGE=quay.io/fedora/fedora-coreos:rawhide
 BUILDER=quay.io/bootc-devel/fedora-bootc-rawhide-standard
